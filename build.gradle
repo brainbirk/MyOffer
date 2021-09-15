@@ -3,6 +3,9 @@ buildscript {
     ext {
         compose_version = '1.0.2'
         hilt_version = '2.38.1'
+        hiltLifeCycleVersion = '1.0.0-alpha03'
+        coroutinesVersion = '1.4.3'
+        retrofitVersion = "2.9.0"
     }
     repositories {
         google()

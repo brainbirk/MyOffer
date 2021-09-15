@@ -3,13 +3,15 @@ package dk.shantech.myoffer.ui.main
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import dk.shantech.myoffer.R
-import dk.shantech.myoffer.ui.home.Greeting
+import dk.shantech.myoffer.ui.home.HomeView
+import dk.shantech.myoffer.ui.home.HomeViewModel
 
 sealed class NavigationItem(var route: String, var icon: Int, var title: String) {
     object Home : NavigationItem("home", R.drawable.ic_launcher_foreground, "Home")
@@ -27,7 +29,8 @@ fun currentRoute(navController: NavController): String? {
 fun Navigation(navController: NavHostController) {
     NavHost(navController, startDestination = NavigationItem.Home.route) {
         composable(NavigationItem.Home.route) {
-            Greeting()
+            val viewModel = hiltViewModel<HomeViewModel>()
+            HomeView(viewModel)
         }
         composable(NavigationItem.Music.route) {
             Text(text = "2")
