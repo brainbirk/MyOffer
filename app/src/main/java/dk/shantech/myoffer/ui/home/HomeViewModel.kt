@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dk.shantech.myoffer.data.Repository
+import dk.shantech.myoffer.data.DealerRepository
 import dk.shantech.myoffer.model.DealerFrontResponse
 import dk.shantech.myoffer.model.NetworkResult
 import kotlinx.coroutines.flow.collect
@@ -14,7 +14,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val repository: Repository): ViewModel() {
+class HomeViewModel @Inject constructor(private val dealerRepository: DealerRepository): ViewModel() {
 
     private val _data : MutableLiveData<DealerFrontResponse> = MutableLiveData()
     val data: LiveData<DealerFrontResponse> = _data
@@ -25,7 +25,7 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Vie
     }
 
     fun getAllDealers() = viewModelScope.launch {
-        repository.getAllDealers().collect { values ->
+        dealerRepository.getAllDealers().collect { values ->
             when(values) {
                 is NetworkResult.Error -> Timber.d("Error")
                 is NetworkResult.Loading -> Timber.d("Loading")

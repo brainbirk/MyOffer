@@ -4,10 +4,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dk.shantech.myoffer.data.DealerService
+import dk.shantech.myoffer.data.remote.DealerService
+import dk.shantech.myoffer.data.remote.HeaderInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import okhttp3.logging.LoggingEventListener
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -19,11 +19,12 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
+    fun provideHttpClient(loggingInterceptor: HttpLoggingInterceptor, headerInterceptor: HeaderInterceptor): OkHttpClient {
         return OkHttpClient
             .Builder()
             .readTimeout(15, TimeUnit.SECONDS)
             .connectTimeout(15, TimeUnit.SECONDS)
+            .addInterceptor(headerInterceptor)
             .addInterceptor(loggingInterceptor)
             .build()
     }
@@ -50,7 +51,7 @@ class NetworkModule {
     @Provides
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BASIC
+            level = HttpLoggingInterceptor.Level.BODY
         }
     }
 
@@ -58,5 +59,4 @@ class NetworkModule {
     @Provides
     fun provideDealerService(retrofit: Retrofit): DealerService =
         retrofit.create(DealerService::class.java)
-
 }

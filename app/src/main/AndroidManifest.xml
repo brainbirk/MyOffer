@@ -23,6 +23,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+    <meta-data
+        android:name="com.shopgun.android.sdk.api_key"
+        android:value="je23B6"/>
+    <meta-data
+        android:name="com.shopgun.android.sdk.api_secret"
+        android:value="JCnY75IYO2jljhvE8ttyT"/>
+    <meta-data
+        android:name="com.shopgun.android.sdk.develop.api_key"
+        android:value="je23B6"/>
+    <meta-data
+        android:name="com.shopgun.android.sdk.develop.api_secret"
+        android:value="JCnY75IYO2jljhvE8ttyT"/>
+
     </application>
 
 </manifest>
