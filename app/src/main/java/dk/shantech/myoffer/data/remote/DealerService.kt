@@ -11,7 +11,7 @@ interface DealerService {
     suspend fun getAllDealers(
         @Query("r_lat") latitude: String,
         @Query("r_lng") longitude: String,
-        @Query("r_radius") radius: String,
+        @Query("r_radius") radius: Int,
         @Query("limit") limit: Int,
         @Query("order_by") orderBy: String,
         @Query("types") types: String,

@@ -7,7 +7,7 @@ class RemoteDataSource @Inject constructor(private val dealerService: DealerServ
     suspend fun getAllDealers(
         latitude: String,
         longitude: String,
-        radius: String,
+        radius: Int,
         limit: Int,
         orderBy: String,
         types: String,
