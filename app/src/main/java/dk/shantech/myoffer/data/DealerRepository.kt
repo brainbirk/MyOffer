@@ -15,7 +15,7 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class DealerRepository @Inject constructor(private val remoteDataSource: RemoteDataSource, private val locationManager: LocationManager) :BaseApiResponse() {
 
-    suspend fun getAllDealers(): Flow<NetworkResult<DealerFrontResponse>> {
+    suspend fun getDealers(orderBy: String, types: String, limit: Int, offset: Int): Flow<NetworkResult<DealerFrontResponse>> {
         val location = locationManager.currentLocation
         return flow {
             emit(safeApiCall {
@@ -23,10 +23,10 @@ class DealerRepository @Inject constructor(private val remoteDataSource: RemoteD
                     latitude = location.latitude,
                     longitude = location.longitude,
                     radius = location.radius,
-                    limit = 12,
-                    orderBy = "name",
-                    types = "paged,incito",
-                    offset = 0
+                    limit = limit,
+                    orderBy = orderBy,
+                    types = types,
+                    offset = offset
                 )
             })
         }.flowOn(Dispatchers.IO)
