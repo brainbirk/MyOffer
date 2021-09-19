@@ -25,7 +25,7 @@ class HomeViewModel @Inject constructor(private val dealerRepository: DealerRepo
     }
 
     fun getAllDealers() = viewModelScope.launch {
-        dealerRepository.getDealers("name", "paged,incito", 20, 0).collect { values ->
+        dealerRepository.getDealers("name", "paged,incito", 24, 0).collect { values ->
             when(values) {
                 is NetworkResult.Error -> Timber.d("Error")
                 is NetworkResult.Loading -> Timber.d("Loading")
