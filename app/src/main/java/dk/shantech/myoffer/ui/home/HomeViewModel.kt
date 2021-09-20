@@ -1,40 +1,25 @@
 package dk.shantech.myoffer.ui.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dk.shantech.myoffer.data.DealerRepository
-import dk.shantech.myoffer.model.DealerFrontResponse
-import dk.shantech.myoffer.model.NetworkResult
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import timber.log.Timber
+import dk.shantech.myoffer.model.DealerFrontResponseItem
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val dealerRepository: DealerRepository): ViewModel() {
 
-    private val _data : MutableLiveData<DealerFrontResponse> = MutableLiveData()
-    val data: LiveData<DealerFrontResponse> = _data
-
+    lateinit var dealers : Flow<PagingData<DealerFrontResponseItem>>
 
     init {
-        getAllDealers()
+        getDealerList("name", "paged,incito") // TODO: 20/09/2021 Move orderBy and type to UI 
     }
 
-    fun getAllDealers() = viewModelScope.launch {
-        dealerRepository.getDealers("name", "paged,incito", 24, 0).collect { values ->
-            when(values) {
-                is NetworkResult.Error -> Timber.d("Error")
-                is NetworkResult.Loading -> Timber.d("Loading")
-                is NetworkResult.Success -> {
-                    Timber.d("Success ${values.data?.size}")
-                    values.data?.let { _data.value = it }
-                }
-            }
-        }
+    private fun getDealerList(orderBy: String, types: String) {
+        dealers = dealerRepository.getDealerList(orderBy = orderBy, types = types).cachedIn(viewModelScope)
     }
-
 }

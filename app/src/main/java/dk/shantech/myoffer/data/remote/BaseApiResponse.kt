@@ -2,7 +2,6 @@ package dk.shantech.myoffer.data.remote
 
 import dk.shantech.myoffer.model.NetworkResult
 import retrofit2.Response
-import java.lang.Exception
 
 abstract class BaseApiResponse {
 
@@ -23,6 +22,4 @@ abstract class BaseApiResponse {
 
     private fun <T> error(errorMessage: String): NetworkResult<T> =
         NetworkResult.Error("Network call failed : $errorMessage")
-
-
 }
