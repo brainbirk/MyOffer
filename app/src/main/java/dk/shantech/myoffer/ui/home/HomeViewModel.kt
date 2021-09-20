@@ -7,11 +7,30 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dk.shantech.myoffer.data.DealerRepository
 import dk.shantech.myoffer.model.DealerFrontResponseItem
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val dealerRepository: DealerRepository): ViewModel() {
+
+    private val _isRefreshing = MutableStateFlow(false)
+
+    val isRefreshing: StateFlow<Boolean>
+        get() = _isRefreshing.asStateFlow()
+
+    fun refresh() {
+        // This doesn't handle multiple 'refreshing' tasks, don't use this
+        viewModelScope.launch {
+            // A fake 2 second 'refresh'
+            _isRefreshing.emit(true)
+            getDealerList("name", "paged,incito")
+            dealers.onCompletion { _isRefreshing.emit(false) }
+
+        }
+    }
+
 
     lateinit var dealers : Flow<PagingData<DealerFrontResponseItem>>
 

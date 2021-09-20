@@ -22,7 +22,7 @@ class DealerRepository @Inject constructor(private val remoteDataSource: RemoteD
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
-                enablePlaceholders = true
+                enablePlaceholders = false
             ),
             pagingSourceFactory = {
                 DealerListPagingSource(remoteDataSource, location, orderBy, types)

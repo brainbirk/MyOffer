@@ -7,6 +7,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,44 +17,59 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import dk.shantech.myoffer.model.DealerFrontResponseItem
 import dk.shantech.myoffer.ui.theme.MyOfferTheme
 import androidx.paging.compose.items
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun HomeView(homeViewModel: HomeViewModel = viewModel()) {
-    val data = homeViewModel.dealers.collectAsLazyPagingItems()
-    LazyColumn {
-        items(data) {
-            DealerItem(dealerItem = it!!)
-        }
+    var isRefreshing = false
 
-        data.apply {
-            when {
-                loadState.refresh is LoadState.Loading -> {
-                    item { LoadingView(modifier = Modifier.fillParentMaxSize()) }
-                }
-                loadState.append is LoadState.Loading -> {
-                    item { LoadingItem() }
-                }
-                loadState.refresh is LoadState.Error -> {
-                    val e = data.loadState.refresh as LoadState.Error
-                    item {
-                        ErrorItem(
-                            message = e.error.localizedMessage!!,
-                            modifier = Modifier.fillParentMaxSize(),
-                            onClickRetry = { retry() }
-                        )
+    val data = homeViewModel.dealers.collectAsLazyPagingItems()
+    SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing),
+            onRefresh = {
+                isRefreshing = true
+                data.refresh()
+                        data.apply { when { loadState.refresh is LoadState.NotLoading -> { isRefreshing = false}} }
+                        },
+    ) {
+        LazyColumn {
+            items(data) { dealerItem ->
+                DealerItem(dealerItem = dealerItem!!)
+            }
+
+            data.apply {
+                when {
+                    loadState.refresh is LoadState.Loading -> {
+                        item { LoadingView(modifier = Modifier.fillParentMaxSize()) }
                     }
-                }
-                loadState.append is LoadState.Error -> {
-                    val e = data.loadState.append as LoadState.Error
-                    item {
-                        ErrorItem(
-                            message = e.error.localizedMessage!!,
-                            onClickRetry = { retry() }
-                        )
+                    loadState.append is LoadState.Loading -> {
+                        item { LoadingItem() }
+                    }
+                    loadState.refresh is LoadState.Error -> {
+                        val e = data.loadState.refresh as LoadState.Error
+                        item {
+                            ErrorItem(
+                                    message = e.error.localizedMessage!!,
+                                    modifier = Modifier.fillParentMaxSize(),
+                                    onClickRetry = { retry() }
+                            )
+                        }
+                    }
+                    loadState.append is LoadState.Error -> {
+                        val e = data.loadState.append as LoadState.Error
+                        item {
+                            ErrorItem(
+                                    message = e.error.localizedMessage!!,
+                                    onClickRetry = { retry() }
+                            )
+                        }
                     }
                 }
             }
